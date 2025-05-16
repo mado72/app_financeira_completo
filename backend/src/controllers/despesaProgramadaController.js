@@ -1,4 +1,5 @@
 const DespesaProgramada = require("../models/despesaProgramadaModel");
+const { startOfYear, endOfYear, setYear } = require('date-fns');
 
 // Criar nova despesa programada
 exports.createDespesaProgramada = async (req, res) => {
@@ -26,6 +27,15 @@ exports.getAllDespesasProgramadas = async (req, res) => {
         const queryObj = { ...req.query };
         const excludedFields = ["page", "sort", "limit", "fields"];
         excludedFields.forEach(el => delete queryObj[el]);
+
+        if (queryObj.ano) {
+            const date = startOfYear(setYear(new Date(), queryObj.ano));
+            queryObj.dataVencimento = {
+                $gte: date,
+                $lt: endOfYear(date)
+            };
+            delete queryObj.ano;
+        }
 
         let query = DespesaProgramada.find(queryObj);
 
