@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NgxChartsModule, Color, ScaleType } from "@swimlane/ngx-charts";
-import { Ativo, AtivoComCotacao } from "../services/ativo.service"; // Ajustar caminho se necessário
+import { AtivoComCotacao } from "../../services/ativo.service";
 
 export interface ChartData {
   name: string;
