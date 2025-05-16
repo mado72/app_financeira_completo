@@ -1,0 +1,38 @@
+/* Estilos para o container do gráfico */
+.grafico-container {
+  margin: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* Mensagens de estado */
+.loading-mensagem,
+.error-mensagem,
+.mensagem-vazia {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.1em;
+  color: #555;
+}
+
+.error-mensagem {
+  color: #D8000C; /* Vermelho para erros */
+  background-color: #FFD2D2;
+  border: 1px solid #D8000C;
+  border-radius: 4px;
+}
+
+/* Estilos adicionais para o gráfico, se necessário */
+ngx-charts-bar-vertical ::ng-deep .ngx-charts-axis-label {
+  font-size: 0.9em;
+}
+
+ngx-charts-bar-vertical ::ng-deep .ngx-charts-tooltip-area {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  color: white !important;
+  border-radius: 4px;
+  padding: 8px !important;
+}
+

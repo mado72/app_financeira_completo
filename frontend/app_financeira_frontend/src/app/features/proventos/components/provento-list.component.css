@@ -1,0 +1,129 @@
+/* Estilos gerais para a lista de proventos */
+.controles-lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Para responsividade */
+}
+
+.filtros {
+  display: flex;
+  gap: 10px; /* Espaçamento entre os filtros */
+  flex-wrap: wrap;
+}
+
+.filtros input[type="text"],
+.filtros select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.btn-adicionar {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.btn-adicionar:hover {
+  background-color: #45a049;
+}
+
+/* Tabela de proventos */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+thead {
+  background-color: #0056b3; /* Azul escuro para o cabeçalho */
+  color: white;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9; /* Linhas alternadas */
+}
+
+tr:hover {
+  background-color: #f1f1f1; /* Destaque ao passar o mouse */
+}
+
+/* Botões de ação na tabela */
+.btn-acao {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: opacity 0.3s ease;
+}
+
+.btn-acao:hover {
+  opacity: 0.8;
+}
+
+.btn-editar {
+  background-color: #ffc107; /* Amarelo */
+  color: #333;
+}
+
+.btn-excluir {
+  background-color: #dc3545; /* Vermelho */
+  color: white;
+}
+
+/* Mensagens de estado */
+.loading-mensagem,
+.error-mensagem,
+.mensagem-vazia {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.1em;
+  color: #555;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.error-mensagem {
+  color: #D8000C;
+  background-color: #FFD2D2;
+  border-color: #D8000C;
+}
+
+/* Resumo dos proventos */
+.resumo-proventos {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #e9ecef; /* Cinza claro */
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+.resumo-proventos p {
+  margin: 5px 0;
+  font-size: 1em;
+}
+
+.resumo-proventos strong {
+  color: #0056b3;
+}
+

@@ -1,0 +1,84 @@
+<h2>{{ isEditMode() ? "Editar Despesa Programada" : "Adicionar Nova Despesa Programada" }}</h2>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando dados da despesa...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+<form [formGroup]="despesaForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="form-grid">
+    <!-- Descrição -->
+    <div class="form-group">
+      <label for="descricao">Descrição:</label>
+      <input id="descricao" type="text" formControlName="descricao">
+      @if (descricao?.invalid && (descricao?.dirty || descricao?.touched)) {
+        <div class="error-validation">
+          @if (descricao?.errors?.["required"]) {
+            <span>A descrição é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Valor -->
+    <div class="form-group">
+      <label for="valor">Valor (R$):</label>
+      <input id="valor" type="number" formControlName="valor" min="0.01" step="0.01">
+      @if (valor?.invalid && (valor?.dirty || valor?.touched)) {
+        <div class="error-validation">
+          @if (valor?.errors?.["required"]) {
+            <span>O valor é obrigatório.</span>
+          }
+          @if (valor?.errors?.["min"]) {
+            <span>O valor deve ser maior que zero.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Data de Vencimento -->
+    <div class="form-group">
+      <label for="dataVencimento">Data de Vencimento:</label>
+      <input id="dataVencimento" type="date" formControlName="dataVencimento">
+      @if (dataVencimento?.invalid && (dataVencimento?.dirty || dataVencimento?.touched)) {
+        <div class="error-validation">
+          @if (dataVencimento?.errors?.["required"]) {
+            <span>A data de vencimento é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Categoria -->
+    <div class="form-group">
+      <label for="categoria">Categoria:</label>
+      <select id="categoria" formControlName="categoria">
+        @for (cat of categoriasDisponiveis(); track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Pago -->
+    <div class="form-group form-group-checkbox">
+      <input id="pago" type="checkbox" formControlName="pago">
+      <label for="pago">Marcar como Paga</label>
+    </div>
+
+    <!-- Observação -->
+    <div class="form-group form-group-full-width">
+      <label for="observacao">Observação (Opcional):</label>
+      <textarea id="observacao" formControlName="observacao" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="despesaForm.invalid || isLoading()" class="btn-principal">
+      {{ isEditMode() ? (isLoading() ? "Salvando..." : "Salvar Alterações") : (isLoading() ? "Criando..." : "Criar Despesa") }}
+    </button>
+    <button type="button" (click)="voltar()" class="btn-secundario" [disabled]="isLoading()">Voltar</button>
+  </div>
+</form>
+

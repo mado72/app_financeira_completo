@@ -1,0 +1,78 @@
+<h2>Fluxo de Caixa</h2>
+
+<div class="controles-fluxo">
+  <div class="periodo-selector">
+    <button (click)="mesAnterior()" class="btn-navegacao">&lt; Mês Anterior</button>
+    <span>{{ dataInicio() | date:"MMMM yyyy" }}</span>
+    <button (click)="proximoMes()" class="btn-navegacao">Próximo Mês &gt;</button>
+  </div>
+  <div class="saldo-info">
+    <span>Saldo Inicial (Simulado): {{ saldoInicial() | currency:"BRL":"symbol":"1.2-2" }}</span>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando fluxo de caixa...</p>
+} @else if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+} @else if (fluxoCaixaItens().length === 0) {
+  <p class="mensagem-vazia">Nenhum item encontrado para o período selecionado.</p>
+} @else {
+  <div class="resumo-financeiro">
+    <div class="resumo-item entradas">
+      <strong>Total Entradas (Previsto):</strong> {{ totalEntradas() | currency:"BRL":"symbol":"1.2-2" }}
+    </div>
+    <div class="resumo-item saidas-programadas">
+      <strong>Total Saídas Programadas (Pagas):</strong> {{ totalSaidasProgramadasPagas() | currency:"BRL":"symbol":"1.2-2" }}
+    </div>
+    <div class="resumo-item saidas-recorrentes">
+      <strong>Total Saídas Recorrentes (Estimado no Período):</strong> {{ totalSaidasRecorrentes() | currency:"BRL":"symbol":"1.2-2" }}
+    </div>
+    <div class="resumo-item saldo-final" [class.valor-negativo]="saldoFinal() < 0">
+      <strong>Saldo Final (Estimado):</strong> {{ saldoFinal() | currency:"BRL":"symbol":"1.2-2" }}
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Descrição</th>
+        <th>Tipo</th>
+        <th>Valor</th>
+        <th>Status (Prog.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of fluxoCaixaItens(); track item; let i = $index) { <!-- Usar $index ou um id único se disponível -->
+        <tr [ngClass]="{
+          'entrada': item.tipo === 'entrada',
+          'saida-programada-paga': item.tipo === 'saida_programada' && item.pago,
+          'saida-programada-nao-paga': item.tipo === 'saida_programada' && !item.pago,
+          'saida-recorrente': item.tipo === 'saida_recorrente'
+        }">
+          <td>{{ item.data | date:"dd/MM/yyyy" }}</td>
+          <td>{{ item.descricao }}</td>
+          <td>
+            @switch (item.tipo) {
+              @case ('entrada') { <span>Entrada</span> }
+              @case ('saida_programada') { <span>Desp. Programada</span> }
+              @case ('saida_recorrente') { <span>Desp. Recorrente</span> }
+            }
+          </td>
+          <td [class.valor-negativo]="item.tipo !== 'entrada'">
+            {{ (item.tipo === "entrada" ? item.valor : -item.valor) | currency:"BRL":"symbol":"1.2-2" }}
+          </td>
+          <td>
+            @if (item.tipo === "saida_programada") {
+              <span>{{ item.pago ? "Paga" : "Não Paga" }}</span>
+            } @else {
+              <span>N/A</span>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+

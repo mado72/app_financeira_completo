@@ -1,0 +1,135 @@
+<h2>{{ isEditMode() ? "Editar Despesa Recorrente" : "Adicionar Nova Despesa Recorrente" }}</h2>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando dados da despesa...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+<form [formGroup]="despesaForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="form-grid">
+    <!-- Descrição -->
+    <div class="form-group">
+      <label for="descricao">Descrição:</label>
+      <input id="descricao" type="text" formControlName="descricao">
+      @if (descricao?.invalid && (descricao?.dirty || descricao?.touched)) {
+        <div class="error-validation">
+          @if (descricao?.errors?.["required"]) {
+            <span>A descrição é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Valor Estimado -->
+    <div class="form-group">
+      <label for="valorEstimado">Valor Estimado (R$):</label>
+      <input id="valorEstimado" type="number" formControlName="valorEstimado" min="0.01" step="0.01">
+      @if (valorEstimado?.invalid && (valorEstimado?.dirty || valorEstimado?.touched)) {
+        <div class="error-validation">
+          @if (valorEstimado?.errors?.["required"]) {
+            <span>O valor estimado é obrigatório.</span>
+          }
+          @if (valorEstimado?.errors?.["min"]) {
+            <span>O valor estimado deve ser maior que zero.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Frequência -->
+    <div class="form-group">
+      <label for="frequencia">Frequência:</label>
+      <select id="frequencia" formControlName="frequencia">
+        @for (freq of frequenciasDisponiveis(); track freq) {
+          <option [value]="freq">{{ freq }}</option>
+        }
+      </select>
+      @if (frequencia?.invalid && (frequencia?.dirty || frequencia?.touched)) {
+        <div class="error-validation">
+          @if (frequencia?.errors?.["required"]) {
+            <span>A frequência é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Dia do Mês Vencimento (Condicional) -->
+    @if (frequencia?.value === "Mensal" || frequencia?.value === "Bimestral" || frequencia?.value === "Trimestral" || frequencia?.value === "Semestral" || frequencia?.value === "Quinzenal") {
+      <div class="form-group">
+        <label for="diaDoMesVencimento">Dia do Mês para Vencimento/Referência:</label>
+        <input id="diaDoMesVencimento" type="number" formControlName="diaDoMesVencimento" min="1" max="31">
+        @if (diaDoMesVencimento?.invalid && (diaDoMesVencimento?.dirty || diaDoMesVencimento?.touched)) {
+          <div class="error-validation">
+            @if (diaDoMesVencimento?.errors?.["required"]) {
+              <span>O dia do mês é obrigatório para esta frequência.</span>
+            }
+            @if (diaDoMesVencimento?.errors?.["min"] || diaDoMesVencimento?.errors?.["max"]) {
+              <span>O dia deve ser entre 1 e 31.</span>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Mês Vencimento (Condicional) -->
+    @if (frequencia?.value === "Anual") {
+      <div class="form-group">
+        <label for="mesVencimento">Mês de Vencimento/Referência:</label>
+        <select id="mesVencimento" formControlName="mesVencimento">
+          <option [ngValue]="null" disabled>Selecione o mês</option>
+          <option [value]="1">Janeiro</option>
+          <option [value]="2">Fevereiro</option>
+          <option [value]="3">Março</option>
+          <option [value]="4">Abril</option>
+          <option [value]="5">Maio</option>
+          <option [value]="6">Junho</option>
+          <option [value]="7">Julho</option>
+          <option [value]="8">Agosto</option>
+          <option [value]="9">Setembro</option>
+          <option [value]="10">Outubro</option>
+          <option [value]="11">Novembro</option>
+          <option [value]="12">Dezembro</option>
+        </select>
+        @if (mesVencimento?.invalid && (mesVencimento?.dirty || mesVencimento?.touched)) {
+          <div class="error-validation">
+            @if (mesVencimento?.errors?.["required"]) {
+              <span>O mês de vencimento é obrigatório para frequência anual.</span>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Categoria -->
+    <div class="form-group">
+      <label for="categoria">Categoria:</label>
+      <select id="categoria" formControlName="categoria">
+        @for (cat of categoriasDisponiveis(); track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Ativa -->
+    <div class="form-group form-group-checkbox">
+      <input id="ativa" type="checkbox" formControlName="ativa">
+      <label for="ativa">Despesa Ativa</label>
+    </div>
+
+    <!-- Observação -->
+    <div class="form-group form-group-full-width">
+      <label for="observacao">Observação (Opcional):</label>
+      <textarea id="observacao" formControlName="observacao" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="despesaForm.invalid || isLoading()" class="btn-principal">
+      {{ isEditMode() ? (isLoading() ? "Salvando..." : "Salvar Alterações") : (isLoading() ? "Criando..." : "Criar Despesa Recorrente") }}
+    </button>
+    <button type="button" (click)="voltar()" class="btn-secundario" [disabled]="isLoading()">Voltar</button>
+  </div>
+</form>
+

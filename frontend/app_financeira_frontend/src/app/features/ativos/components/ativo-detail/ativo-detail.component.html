@@ -1,0 +1,99 @@
+<h2>Detalhes do Ativo</h2>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando detalhes do ativo...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+@if (ativoComCotacao(); as item) {
+  <div class="detalhes-container">
+    <div class="detalhes-header">
+      <h3>{{ item.ativo.nome }} ({{ item.ativo.ticker }})</h3>
+      <button routerLink="/ativos/editar/{{ item.ativo._id }}" class="btn-acao btn-editar">Editar Ativo</button>
+    </div>
+
+    <div class="detalhes-grid">
+      <div class="detalhe-item">
+        <strong>Tipo:</strong> {{ item.ativo.tipo }}
+      </div>
+      <div class="detalhe-item">
+        <strong>Quantidade:</strong> {{ item.ativo.quantidade }}
+      </div>
+      <div class="detalhe-item">
+        <strong>Preço Médio de Compra:</strong> 
+        {{ item.ativo.precoMedioCompra | currency:(item.cotacao?.currency || (item.ativo.tipo === 'ACAO_INTERNACIONAL' || item.ativo.tipo === 'ETF_INTERNACIONAL' || item.ativo.tipo === 'REIT' || item.ativo.tipo === 'CRIPTOMOEDA' || item.ativo.tipo === 'MOEDA_ESTRANGEIRA' ? 'USD' : 'BRL')):'symbol':'1.2-2' }}
+      </div>
+      <div class="detalhe-item">
+        <strong>Data de Aquisição:</strong> {{ item.ativo.dataAquisicao | date:"dd/MM/yyyy" }}
+      </div>
+      
+      @if (item.cotacao) {
+        <div class="detalhe-item">
+          <strong>Preço Atual:</strong> 
+          @if (item.cotacao.price !== null && item.cotacao.price !== undefined) {
+            {{ item.cotacao.price | currency:(item.cotacao.currency || (item.ativo.tipo === 'ACAO_INTERNACIONAL' || item.ativo.tipo === 'ETF_INTERNACIONAL' || item.ativo.tipo === 'REIT' || item.ativo.tipo === 'CRIPTOMOEDA' || item.ativo.tipo === 'MOEDA_ESTRANGEIRA' ? 'USD' : 'BRL')):'symbol':'1.2-2' }}
+            @if (item.cotacao.isFallback) {
+              <span class="fallback-indicator" title="Cotação de fallback (pode estar desatualizada)"> (Fallback)</span>
+            }
+          } @else {
+            {{ item.cotacao.error || "N/A" }}
+          }
+        </div>
+        <div class="detalhe-item">
+          <strong>Moeda da Cotação:</strong> {{ item.cotacao.currency || (item.ativo.tipo === 'ACAO_INTERNACIONAL' || item.ativo.tipo === 'ETF_INTERNACIONAL' || item.ativo.tipo === 'REIT' || item.ativo.tipo === 'CRIPTOMOEDA' || item.ativo.tipo === 'MOEDA_ESTRANGEIRA' ? 'USD' : 'BRL') }}
+        </div>
+        <div class="detalhe-item">
+          <strong>Fonte da Cotação:</strong> {{ item.cotacao.source || "N/A" }}
+        </div>
+        @if (item.cotacao.lastUpdated) {
+          <div class="detalhe-item">
+            <strong>Última Atualização (Cotação):</strong> {{ item.cotacao.lastUpdated | date:"dd/MM/yyyy HH:mm:ss" }}
+          </div>
+        }
+         <div class="detalhe-item">
+          <strong>Valor Total Atual:</strong> 
+          @if (calcularValorTotal(item.ativo, item.cotacao); as valorTotal) {
+            {{ valorTotal | currency:(item.cotacao.currency || (item.ativo.tipo === 'ACAO_INTERNACIONAL' || item.ativo.tipo === 'ETF_INTERNACIONAL' || item.ativo.tipo === 'REIT' || item.ativo.tipo === 'CRIPTOMOEDA' || item.ativo.tipo === 'MOEDA_ESTRANGEIRA' ? 'USD' : 'BRL')):'symbol':'1.2-2' }}
+          } @else {
+            N/A
+          }
+        </div>
+        <div class="detalhe-item" [class.valor-negativo]="calcularLucroPrejuizo(item.ativo, item.cotacao) !== null && calcularLucroPrejuizo(item.ativo, item.cotacao)! < 0">
+          <strong>Lucro/Prejuízo:</strong> 
+          @if (calcularLucroPrejuizo(item.ativo, item.cotacao); as lucroPrejuizo) {
+            {{ lucroPrejuizo | currency:(item.cotacao.currency || (item.ativo.tipo === 'ACAO_INTERNACIONAL' || item.ativo.tipo === 'ETF_INTERNACIONAL' || item.ativo.tipo === 'REIT' || item.ativo.tipo === 'CRIPTOMOEDA' || item.ativo.tipo === 'MOEDA_ESTRANGEIRA' ? 'USD' : 'BRL')):'symbol':'1.2-2' }}
+            (@if (calcularPercentualLucroPrejuizo(item.ativo, item.cotacao); as percentual) {
+              {{ percentual | number:'1.2-2' }}%
+            })
+          } @else {
+            N/A
+          }
+        </div>
+      } @else {
+        <div class="detalhe-item">
+          <strong>Cotação:</strong> Não disponível
+        </div>
+      }
+
+      @if (item.ativo.detalhes && objectKeys(item.ativo.detalhes).length > 0) {
+        <div class="detalhes-adicionais">
+          <h4>Detalhes Adicionais:</h4>
+          <ul>
+            @for (detalhe of objectEntries(item.ativo.detalhes); track detalhe[0]) {
+              <li><strong>{{ detalhe[0] }}:</strong> {{ detalhe[1] }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button (click)="voltar()" class="btn-secundario">Voltar para Lista</button>
+    </div>
+  </div>
+} @else if (!isLoading() && !error()) {
+  <p class="mensagem-vazia">Ativo não encontrado.</p>
+}
+

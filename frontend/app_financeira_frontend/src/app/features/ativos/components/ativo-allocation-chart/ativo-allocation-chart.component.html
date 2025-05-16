@@ -1,0 +1,23 @@
+@if (!isLoading() && chartData().length > 0) {
+  <div class="chart-container">
+    <ngx-charts-pie-chart
+      [view]="undefined" 
+      [scheme]="colorScheme"
+      [results]="chartData()"
+      [gradient]="gradient"
+      [legend]="showLegend"
+      [legendPosition]="legendPosition"
+      [labels]="showLabels"
+      [doughnut]="isDoughnut"
+      (select)="onSelect($event)"
+      (activate)="onActivate($event)"
+      (deactivate)="onDeactivate($event)"
+      >
+    </ngx-charts-pie-chart>
+  </div>
+} @else if (!isLoading() && chartData().length === 0) {
+  <p class="mensagem-vazia">Não há dados suficientes para exibir o gráfico de alocação (verifique se os ativos possuem cotação e valor).</p>
+} @else if (isLoading()) {
+  <p class="loading-mensagem">Carregando dados para o gráfico...</p>
+}
+

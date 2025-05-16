@@ -1,0 +1,116 @@
+<h2>{{ isEditMode() ? "Editar Ativo" : "Adicionar Novo Ativo" }}</h2>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando dados do ativo...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+<form [formGroup]="ativoForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="form-grid">
+    <!-- Nome -->
+    <div class="form-group">
+      <label for="nome">Nome do Ativo:</label>
+      <input id="nome" type="text" formControlName="nome">
+      @if (nome?.invalid && (nome?.dirty || nome?.touched)) {
+        <div class="error-validation">
+          @if (nome?.errors?.["required"]) {
+            <span>O nome do ativo é obrigatório.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Ticker -->
+    <div class="form-group">
+      <label for="ticker">Ticker:</label>
+      <input id="ticker" type="text" formControlName="ticker" [readonly]="isEditMode()">
+      @if (ticker?.invalid && (ticker?.dirty || ticker?.touched)) {
+        <div class="error-validation">
+          @if (ticker?.errors?.["required"]) {
+            <span>O ticker é obrigatório.</span>
+          }
+        </div>
+      }
+      @if (isEditMode()) {
+        <small class="form-text text-muted">O ticker não pode ser alterado após a criação para manter a integridade dos dados de cotação.</small>
+      }
+    </div>
+
+    <!-- Tipo -->
+    <div class="form-group">
+      <label for="tipo">Tipo de Ativo:</label>
+      <select id="tipo" formControlName="tipo">
+        <option value="" disabled>Selecione o tipo</option>
+        @for (tipoOpt of tiposDeAtivo(); track tipoOpt) {
+          <option [value]="tipoOpt">{{ tipoOpt }}</option>
+        }
+      </select>
+      @if (tipo?.invalid && (tipo?.dirty || tipo?.touched)) {
+        <div class="error-validation">
+          @if (tipo?.errors?.["required"]) {
+            <span>O tipo do ativo é obrigatório.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Quantidade -->
+    <div class="form-group">
+      <label for="quantidade">Quantidade:</label>
+      <input id="quantidade" type="number" formControlName="quantidade" min="0">
+      @if (quantidade?.invalid && (quantidade?.dirty || quantidade?.touched)) {
+        <div class="error-validation">
+          @if (quantidade?.errors?.["required"]) {
+            <span>A quantidade é obrigatória.</span>
+          }
+          @if (quantidade?.errors?.["min"]) {
+            <span>A quantidade não pode ser negativa.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Preço Médio de Compra -->
+    <div class="form-group">
+      <label for="precoMedioCompra">Preço Médio de Compra:</label>
+      <input id="precoMedioCompra" type="number" formControlName="precoMedioCompra" min="0" step="0.01">
+      @if (precoMedioCompra?.invalid && (precoMedioCompra?.dirty || precoMedioCompra?.touched)) {
+        <div class="error-validation">
+          @if (precoMedioCompra?.errors?.["required"]) {
+            <span>O preço médio de compra é obrigatório.</span>
+          }
+          @if (precoMedioCompra?.errors?.["min"]) {
+            <span>O preço médio de compra não pode ser negativo.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Data de Aquisição -->
+    <div class="form-group">
+      <label for="dataAquisicao">Data de Aquisição:</label>
+      <input id="dataAquisicao" type="date" formControlName="dataAquisicao">
+    </div>
+  </div>
+
+  <!-- Detalhes (Exemplo básico, pode ser expandido) -->
+  <!-- 
+  <fieldset formGroupName="detalhes" class="form-group-fieldset">
+    <legend>Detalhes Adicionais</legend>
+    <div class="form-group">
+      <label for="detalheExemplo">Exemplo Detalhe:</label>
+      <input id="detalheExemplo" type="text" formControlName="exemplo">
+    </div>
+  </fieldset>
+  -->
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="ativoForm.invalid || isLoading()" class="btn-principal">
+      {{ isEditMode() ? (isLoading() ? "Salvando..." : "Salvar Alterações") : (isLoading() ? "Criando..." : "Criar Ativo") }}
+    </button>
+    <button type="button" (click)="voltar()" class="btn-secundario" [disabled]="isLoading()">Voltar</button>
+  </div>
+</form>
+

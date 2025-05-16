@@ -1,0 +1,16 @@
+export const TIPOS_ATIVO = [
+    "ACAO_NACIONAL",
+    "ACAO_INTERNACIONAL",
+    "CRIPTOMOEDA",
+    "MOEDA_ESTRANGEIRA",
+    "FUNDO_IMOBILIARIO",
+    "REIT",
+    "ETF_NACIONAL",
+    "ETF_INTERNACIONAL",
+    "BOND_NACIONAL",
+    "BOND_INTERNACIONAL",
+    "LCA_LCI",
+    "BDR",
+    "OUTRO"
+];
+

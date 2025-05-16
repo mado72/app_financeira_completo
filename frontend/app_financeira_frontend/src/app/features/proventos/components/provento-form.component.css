@@ -1,0 +1,137 @@
+/* Estilos para o container do formulário */
+.form-container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 1.8em;
+}
+
+/* Estilos para os grupos de formulário */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Para incluir padding e border na largura/altura total */
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #007bff; /* Azul para foco */
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-group textarea {
+  resize: vertical; /* Permite redimensionamento vertical */
+  min-height: 80px;
+}
+
+/* Mensagens de erro de validação */
+.error-validation {
+  color: #dc3545; /* Vermelho para erros */
+  font-size: 0.85em;
+  margin-top: 5px;
+}
+
+.error-validation span {
+  display: block;
+}
+
+/* Botões de ação do formulário */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; /* Espaço entre os botões */
+  margin-top: 30px;
+}
+
+.btn-salvar,
+.btn-voltar {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.btn-salvar {
+  background-color: #28a745; /* Verde para salvar */
+  color: white;
+}
+
+.btn-salvar:hover {
+  background-color: #218838;
+}
+
+.btn-salvar:disabled {
+  background-color: #6c757d; /* Cinza quando desabilitado */
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-voltar {
+  background-color: #6c757d; /* Cinza para voltar */
+  color: white;
+}
+
+.btn-voltar:hover {
+  background-color: #5a6268;
+}
+
+.btn-voltar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mensagens de estado (loading, error) */
+.loading-mensagem,
+.error-mensagem {
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.loading-mensagem {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.error-mensagem {
+  background-color: #f8d7da; /* Rosa claro para erros */
+  color: #721c24; /* Vermelho escuro para texto de erro */
+  border: 1px solid #f5c6cb;
+}
+

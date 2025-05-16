@@ -1,0 +1,119 @@
+<div class="form-container">
+  <h2>{{ isEditMode() ? 'Editar Provento' : 'Adicionar Novo Provento' }}</h2>
+
+  @if (isLoading()) {
+    <p class="loading-mensagem">Carregando...</p>
+  }
+  @if (error()) {
+    <p class="error-mensagem">Erro: {{ error() }}</p>
+  }
+
+  <form [formGroup]="proventoForm" (ngSubmit)="onSubmit()">
+    <!-- Ticker do Ativo -->
+    <div class="form-group">
+      <label for="ativoTicker">Ativo (Ticker):</label>
+      <select id="ativoTicker" formControlName="ativoTicker">
+        <option value="" disabled>Selecione um ativo</option>
+        @for (ativo of ativosDisponiveis(); track ativo._id) {
+          <option [value]="ativo.ticker">{{ ativo.nome }} ({{ ativo.ticker }})</option>
+        }
+      </select>
+      @if (ativoTicker?.invalid && (ativoTicker?.dirty || ativoTicker?.touched)) {
+        <div class="error-validation">
+          @if (ativoTicker?.errors?.["required"]) {
+            <span>Ticker do ativo é obrigatório.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Data Com -->
+    <div class="form-group">
+      <label for="dataCom">Data Com:</label>
+      <input type="date" id="dataCom" formControlName="dataCom">
+      @if (dataCom?.invalid && (dataCom?.dirty || dataCom?.touched)) {
+        <div class="error-validation">
+          @if (dataCom?.errors?.["required"]) {
+            <span>Data Com é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Data Pagamento -->
+    <div class="form-group">
+      <label for="dataPagamento">Data de Pagamento:</label>
+      <input type="date" id="dataPagamento" formControlName="dataPagamento">
+      @if (dataPagamento?.invalid && (dataPagamento?.dirty || dataPagamento?.touched)) {
+        <div class="error-validation">
+          @if (dataPagamento?.errors?.["required"]) {
+            <span>Data de Pagamento é obrigatória.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Tipo de Provento -->
+    <div class="form-group">
+      <label for="tipo">Tipo de Provento:</label>
+      <select id="tipo" formControlName="tipo">
+        @for (tipoOpt of tiposDeProvento(); track tipoOpt) {
+          <option [value]="tipoOpt">{{ tipoOpt }}</option>
+        }
+      </select>
+      @if (tipo?.invalid && (tipo?.dirty || tipo?.touched)) {
+        <div class="error-validation">
+          @if (tipo?.errors?.["required"]) {
+            <span>Tipo de provento é obrigatório.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Valor Bruto por Unidade -->
+    <div class="form-group">
+      <label for="valorBrutoPorUnidade">Valor Bruto por Unidade/Cota:</label>
+      <input type="number" id="valorBrutoPorUnidade" formControlName="valorBrutoPorUnidade" step="0.00001" min="0">
+      @if (valorBrutoPorUnidade?.invalid && (valorBrutoPorUnidade?.dirty || valorBrutoPorUnidade?.touched)) {
+        <div class="error-validation">
+          @if (valorBrutoPorUnidade?.errors?.["required"]) {
+            <span>Valor bruto por unidade é obrigatório.</span>
+          }
+          @if (valorBrutoPorUnidade?.errors?.["min"]) {
+            <span>Valor bruto deve ser maior que zero.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Quantidade na Data Com -->
+    <div class="form-group">
+      <label for="quantidadeNaDataCom">Quantidade de Ativos na Data Com:</label>
+      <input type="number" id="quantidadeNaDataCom" formControlName="quantidadeNaDataCom" min="1">
+      @if (quantidadeNaDataCom?.invalid && (quantidadeNaDataCom?.dirty || quantidadeNaDataCom?.touched)) {
+        <div class="error-validation">
+          @if (quantidadeNaDataCom?.errors?.["required"]) {
+            <span>Quantidade na Data Com é obrigatória.</span>
+          }
+          @if (quantidadeNaDataCom?.errors?.["min"]) {
+            <span>Quantidade deve ser no mínimo 1.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Observação -->
+    <div class="form-group">
+      <label for="observacao">Observação (Opcional):</label>
+      <textarea id="observacao" formControlName="observacao" rows="3"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-salvar" [disabled]="proventoForm.invalid || isLoading()">
+        {{ isEditMode() ? 'Salvar Alterações' : 'Adicionar Provento' }}
+      </button>
+      <button type="button" class="btn-voltar" (click)="voltar()" [disabled]="isLoading()">Voltar</button>
+    </div>
+  </form>
+</div>
+

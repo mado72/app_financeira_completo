@@ -1,0 +1,33 @@
+<div class="grafico-container">
+  @if (isLoading()) {
+    <p class="loading-mensagem">Carregando dados do gráfico...</p>
+  }
+  @if (error()) {
+    <p class="error-mensagem">Erro ao carregar dados do gráfico: {{ error() }}</p>
+  }
+  @if (!isLoading() && !error() && dadosGrafico().length === 0) {
+    <p class="mensagem-vazia">Nenhum dado de rendimento disponível para exibir o gráfico.</p>
+  }
+  @if (!isLoading() && !error() && dadosGrafico().length > 0) {
+    <ngx-charts-bar-vertical
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="dadosGrafico()"
+      [gradient]="false"
+      [xAxis]="xAxis"
+      [yAxis]="yAxis"
+      [legend]="legend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel"
+      [animations]="animations"
+      (select)="onSelect($event)"
+      (activate)="onActivate($event)"
+      (deactivate)="onDeactivate($event)"
+      [yAxisTickFormatting]="formatYAxisTick"
+    >
+    </ngx-charts-bar-vertical>
+  }
+</div>
+

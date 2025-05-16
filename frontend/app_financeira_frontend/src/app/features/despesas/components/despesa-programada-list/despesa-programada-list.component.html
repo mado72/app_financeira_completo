@@ -1,0 +1,85 @@
+<h2>Despesas Programadas</h2>
+
+<div class="controles-lista">
+  <button routerLink="/despesas/programadas/nova" class="btn-adicionar">Adicionar Nova Despesa Programada</button>
+  <div class="filtros">
+    <select [ngModel]="filtroMes()" (ngModelChange)="filtroMes.set($event); onFiltroChange()">
+      <option [ngValue]="undefined">Todos os Meses</option>
+      <option [value]="1">Janeiro</option>
+      <option [value]="2">Fevereiro</option>
+      <option [value]="3">Março</option>
+      <option [value]="4">Abril</option>
+      <option [value]="5">Maio</option>
+      <option [value]="6">Junho</option>
+      <option [value]="7">Julho</option>
+      <option [value]="8">Agosto</option>
+      <option [value]="9">Setembro</option>
+      <option [value]="10">Outubro</option>
+      <option [value]="11">Novembro</option>
+      <option [value]="12">Dezembro</option>
+    </select>
+    <select [ngModel]="filtroAno()" (ngModelChange)="filtroAno.set($event); onFiltroChange()">
+      @for (ano of anosDisponiveis(); track ano) {
+        <option [value]="ano">{{ ano }}</option>
+      }
+    </select>
+    <select [ngModel]="filtroPago()" (ngModelChange)="filtroPago.set($event); onFiltroChange()">
+      <option [ngValue]="undefined">Status (Todos)</option>
+      <option [value]="true">Pagas</option>
+      <option [value]="false">Não Pagas</option>
+    </select>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando despesas programadas...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+@if (!isLoading() && !error() && despesasProgramadas().length === 0) {
+  <p class="mensagem-vazia">Nenhuma despesa programada encontrada com os filtros atuais ou nenhuma despesa cadastrada.</p>
+}
+
+@if (despesasProgramadas().length > 0) {
+  <table>
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Data Vencimento</th>
+        <th>Categoria</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (despesa of despesasProgramadas(); track despesa._id) {
+        <tr [class.pago]="despesa.pago">
+          <td>{{ despesa.descricao }}</td>
+          <td>{{ despesa.valor | currency:"BRL":"symbol":"1.2-2" }}</td>
+          <td>{{ despesa.dataVencimento | date:"dd/MM/yyyy" }}</td>
+          <td>{{ despesa.categoria }}</td>
+          <td>
+            @if (despesa.pago) {
+              <span class="status-pago">Paga</span>
+            } @else {
+              <span class="status-nao-pago">Não Paga</span>
+            }
+          </td>
+          <td>
+            <button routerLink="/despesas/programadas/editar/{{ despesa._id }}" class="btn-acao btn-editar">Editar</button>
+            <button (click)="confirmarDelecao(despesa._id)" class="btn-acao btn-excluir">Excluir</button>
+            @if (!despesa.pago) {
+              <button (click)="marcarComoPaga(despesa)" class="btn-acao btn-pagar">Marcar Paga</button>
+            } @else {
+              <button (click)="marcarComoNaoPaga(despesa)" class="btn-acao btn-estornar">Marcar Não Paga</button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+

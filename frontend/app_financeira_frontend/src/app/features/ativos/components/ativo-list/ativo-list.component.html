@@ -1,0 +1,74 @@
+<h2>Meus Ativos</h2>
+
+<div class="controles-lista">
+  <button routerLink="/ativos/novo" class="btn-adicionar">Adicionar Novo Ativo</button>
+  <div class="filtros">
+    <input type="text" placeholder="Filtrar por nome ou ticker..." [ngModel]="filtroNome()" (ngModelChange)="filtroNome.set($event)" />
+    <select [ngModel]="filtroTipo()" (ngModelChange)="filtroTipo.set($event)">
+      <option value="">Todos os Tipos</option>
+      @for (tipo of tiposDeAtivo(); track tipo) {
+        <option [value]="tipo">{{ tipo }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando ativos e cotações...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+@if (!isLoading() && !error() && ativosFiltrados().length === 0) {
+  <p class="mensagem-vazia">Nenhum ativo encontrado com os filtros atuais ou nenhum ativo cadastrado.</p>
+}
+
+@if (ativosFiltrados().length > 0) {
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Ticker</th>
+        <th>Tipo</th>
+        <th>Quantidade</th>
+        <th>Preço Médio Compra</th>
+        <th>Preço Atual</th>
+        <th>Moeda</th>
+        <th>Fonte Cotação</th>
+        <th>Data Aquisição</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of ativosFiltrados(); track item.ativo._id) {
+        <tr>
+          <td>{{ item.ativo.nome }}</td>
+          <td>{{ item.ativo.ticker }}</td>
+          <td>{{ item.ativo.tipo }}</td>
+          <td>{{ item.ativo.quantidade }}</td>
+          <td>{{ item.ativo.precoMedioCompra | currency:getCurrencyCode(item):'symbol':'1.2-2' }}</td>
+          <td [class.valor-negativo]="item.cotacao?.price === null || item.cotacao?.error">
+            @if (item.cotacao?.price !== null && item.cotacao?.price !== undefined) {
+              {{ item.cotacao?.price | currency:getCurrencyCode(item):'symbol':'1.2-2' }}
+              @if (item.cotacao?.isFallback) {
+                <span class="fallback-indicator" title="Cotação de fallback (pode estar desatualizada)"> (Fallback)</span>
+              }
+            } @else {
+              {{ item.cotacao?.error || "N/A" }}
+            }
+          </td>
+          <td>{{ getCurrencyCode(item) }}</td>
+          <td>{{ item.cotacao?.source || "N/A" }}</td>
+          <td>{{ item.ativo.dataAquisicao | date:"dd/MM/yyyy" }}</td>
+          <td>
+            <button (click)="verDetalhes(item.ativo._id)" class="btn-acao btn-detalhes">Detalhes</button>
+            <button (click)="editarAtivo(item.ativo._id)" class="btn-acao btn-editar">Editar</button>
+            <button (click)="confirmarDelecao(item.ativo._id)" class="btn-acao btn-excluir">Excluir</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+

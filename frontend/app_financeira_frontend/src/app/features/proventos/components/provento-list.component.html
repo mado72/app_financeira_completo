@@ -1,0 +1,78 @@
+<h2>Meus Proventos</h2>
+
+<div class="controles-lista">
+  <button routerLink="/proventos/novo" class="btn-adicionar">Adicionar Novo Provento</button>
+  <div class="filtros">
+    <input type="text" placeholder="Filtrar por ticker..." [ngModel]="filtroTicker()" (ngModelChange)="filtroTicker.set($event); onFiltroChange()" />
+    <select [ngModel]="filtroTipoProvento()" (ngModelChange)="filtroTipoProvento.set($event); onFiltroChange()">
+      <option value="">Todos os Tipos</option>
+      @for (tipo of tiposDeProvento(); track tipo) {
+        <option [value]="tipo">{{ tipo }}</option>
+      }
+    </select>
+    <select [ngModel]="filtroAnoPagamento()" (ngModelChange)="filtroAnoPagamento.set(+$event); onFiltroChange()">
+      <option [ngValue]="undefined">Todos os Anos</option>
+      @for (ano of anosDisponiveis(); track ano) {
+        <option [value]="ano">{{ ano }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando proventos...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+@if (!isLoading() && !error() && proventosFiltrados().length === 0) {
+  <p class="mensagem-vazia">Nenhum provento encontrado com os filtros atuais ou nenhum provento cadastrado.</p>
+}
+
+@if (proventosFiltrados().length > 0) {
+  <div class="resumo-proventos">
+    <p><strong>Total Bruto Filtrado:</strong> {{ totalProventosBruto() | currency:
+      'BRL':'symbol':'1.2-2' }}</p>
+    <p><strong>Total Líquido Filtrado:</strong> {{ totalProventosLiquido() | currency:
+      'BRL':'symbol':'1.2-2' }}</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Ticker</th>
+        <th>Tipo</th>
+        <th>Data Com</th>
+        <th>Data Pagamento</th>
+        <th>Qtde. na Data Com</th>
+        <th>Valor Bruto/Un.</th>
+        <th>Valor Total Bruto</th>
+        <th>Imposto Retido</th>
+        <th>Valor Total Líquido</th>
+        <th>Observação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (provento of proventosFiltrados(); track provento._id) {
+        <tr>
+          <td>{{ provento.ativoTicker }}</td>
+          <td>{{ provento.tipo }}</td>
+          <td>{{ provento.dataCom | date:'dd/MM/yyyy' }}</td>
+          <td>{{ provento.dataPagamento | date:'dd/MM/yyyy' }}</td>
+          <td>{{ provento.quantidadeNaDataCom }}</td>
+          <td>{{ provento.valorBrutoPorUnidade | currency:'BRL':'symbol':'1.2-5' }}</td>
+          <td>{{ provento.valorTotalBruto | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ provento.impostoRetido | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ provento.valorTotalLiquido | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ provento.observacao }}</td>
+          <td>
+            <button (click)="editarProvento(provento._id)" class="btn-acao btn-editar">Editar</button>
+            <button (click)="confirmarDelecao(provento._id)" class="btn-acao btn-excluir">Excluir</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+

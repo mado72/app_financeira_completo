@@ -1,0 +1,67 @@
+<h2>Despesas Recorrentes</h2>
+
+<div class="controles-lista">
+  <button routerLink="/despesas/recorrentes/nova" class="btn-adicionar">Adicionar Nova Despesa Recorrente</button>
+  <div class="filtros">
+    <select [ngModel]="filtroAtiva()" (ngModelChange)="filtroAtiva.set($event); onFiltroChange()">
+      <option [ngValue]="undefined">Status (Todos)</option>
+      <option [value]="true">Ativas</option>
+      <option [value]="false">Inativas</option>
+    </select>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <p class="loading-mensagem">Carregando despesas recorrentes...</p>
+}
+@if (error()) {
+  <p class="error-mensagem">Erro: {{ error() }}</p>
+}
+
+@if (!isLoading() && !error() && despesasRecorrentes().length === 0) {
+  <p class="mensagem-vazia">Nenhuma despesa recorrente encontrada com os filtros atuais ou nenhuma despesa cadastrada.</p>
+}
+
+@if (despesasRecorrentes().length > 0) {
+  <table>
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor Estimado</th>
+        <th>Frequência</th>
+        <th>Dia Venc. (Mês)</th>
+        <th>Mês Venc. (Ano)</th>
+        <th>Categoria</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (despesa of despesasRecorrentes(); track despesa._id) {
+        <tr [class.inativa]="!despesa.ativa">
+          <td>{{ despesa.descricao }}</td>
+          <td>{{ despesa.valorEstimado | currency:"BRL":"symbol":"1.2-2" }}</td>
+          <td>{{ despesa.frequencia }}</td>
+          <td>{{ despesa.diaDoMesVencimento || "N/A" }}</td>
+          <td>{{ despesa.mesVencimento || "N/A" }}</td>
+          <td>{{ despesa.categoria }}</td>
+          <td>
+            @if (despesa.ativa) {
+              <span class="status-ativa">Ativa</span>
+            } @else {
+              <span class="status-inativa">Inativa</span>
+            }
+          </td>
+          <td>
+            <button routerLink="/despesas/recorrentes/editar/{{ despesa._id }}" class="btn-acao btn-editar">Editar</button>
+            <button (click)="confirmarDelecao(despesa._id)" class="btn-acao btn-excluir">Excluir</button>
+            <button (click)="toggleAtiva(despesa)" class="btn-acao btn-toggle-status">
+              {{ despesa.ativa ? "Desativar" : "Ativar" }}
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
