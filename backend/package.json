@@ -16,8 +16,9 @@
     "mongoose": "^8.14.3"
   },
   "dependencies": {
-    "express": "^5.1.0",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "express": "^5.1.0",
     "mongodb": "^6.16.0",
     "node-cache": "^5.1.2",
     "yahoo-finance2": "^2.13.3"
