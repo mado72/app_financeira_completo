@@ -11,12 +11,12 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "express": "^5.1.0",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.1.4",
     "mongoose": "^8.14.3"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "cors": "^2.8.5",
     "mongodb": "^6.16.0",
     "node-cache": "^5.1.2",
