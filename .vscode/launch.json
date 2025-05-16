@@ -1,4 +1,5 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "Containers: Node.js Launch",
@@ -10,6 +11,82 @@
                 "package": "${workspaceFolder}/backend/package.json",
                 "localRoot": "${workspaceFolder}/backend"
             }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Backend",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "program": "${workspaceFolder}/backend/src/app.js"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Frontend",
+            "url": "http://localhost:4200",
+            "preLaunchTask": "npm: start - frontend/app_financeira_frontend",
+            "webRoot": "${workspaceFolder}/frontend"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Backend Tests (Jest)",
+            "program": "${workspaceFolder}/backend/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--watchAll=false"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "program": "${workspaceFolder}/backend/node_modules/jest/bin/jest.js"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Frontend Tests (Jest)",
+            "program": "${workspaceFolder}/frontend/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--watchAll=false"
+            ],
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "program": "${workspaceFolder}/frontend/node_modules/jest/bin/jest.js"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Current Test File",
+            "program": "${workspaceFolder}/${fileDirname}/../node_modules/.bin/jest",
+            "args": [
+                "${fileBasename}",
+                "--runInBand",
+                "--watchAll=false"
+            ],
+            "cwd": "${fileDirname}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "program": "${workspaceFolder}/${fileDirname}/../node_modules/jest/bin/jest.js"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack",
+            "configurations": [
+                "Backend",
+                "Frontend"
+            ]
         }
     ]
 }
