@@ -36,10 +36,11 @@ export class DespesaProgramadaService {
     
     const url = `${this.apiUrl}${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     
-    return this.http.get<DespesaProgramada[]>(url).pipe(
-      tap(despesas => {
-        this.despesasProgramadas.set(despesas);
+    return this.http.get<{data: {despesasProgramadas: DespesaProgramada[]}}>(url).pipe(
+      map(response => {
+        this.despesasProgramadas.set(response.data.despesasProgramadas);
         this.isLoading.set(false);
+        return response.data.despesasProgramadas;
       }),
       catchError(err => {
         console.error('Erro ao buscar despesas programadas:', err);
@@ -51,7 +52,8 @@ export class DespesaProgramadaService {
   }
 
   getDespesaProgramada(id: string): Observable<DespesaProgramada | null> {
-    return this.http.get<DespesaProgramada>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<{data: {despesaProgramada: DespesaProgramada}}>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data.despesaProgramada),
       catchError(err => {
         console.error('Erro ao buscar despesa programada:', err);
         return of(null);
@@ -73,15 +75,17 @@ export class DespesaProgramadaService {
   }
 
   updateDespesaProgramada(id: string, despesa: Partial<DespesaProgramada>): Observable<DespesaProgramada | null> {
-    return this.http.put<DespesaProgramada>(`${this.apiUrl}/${id}`, despesa).pipe(
-      tap(despesaAtualizada => {
+    return this.http.patch<{data: {despesaProgramada: DespesaProgramada}}>(`${this.apiUrl}/${id}`, despesa).pipe(
+      map(response => {
         const despesasAtuais = this.despesasProgramadas();
         const index = despesasAtuais.findIndex(d => d._id === id);
         if (index !== -1) {
           const novaLista = [...despesasAtuais];
-          novaLista[index] = despesaAtualizada;
+          novaLista[index] = response.data.despesaProgramada;
           this.despesasProgramadas.set(novaLista);
+          return despesasAtuais[index];
         }
+        return null;
       }),
       catchError(err => {
         console.error('Erro ao atualizar despesa programada:', err);
